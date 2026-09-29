@@ -56,7 +56,7 @@ async function main() {
     .description(
       "High-fidelity inline QR code generator & decoder with terminal rendering supporting Kitty, iTerm2, Sixel, Half-Block Unicode, and Braille graphics."
     )
-    .version("1.0.0", "-v, --version", "Output the current version")
+    .version("1.1.0", "-v, --version", "Output the current version")
     .argument("[text]", "Text or URL to encode in QR code")
     .option(
       "-p, --protocol <protocol>",
