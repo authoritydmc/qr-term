@@ -1,6 +1,6 @@
 # qr-term 📲
 
-[![CI](https://github.com/username/qr-term/actions/workflows/ci.yml/badge.svg)](https://github.com/username/qr-term/actions/workflows/ci.yml)
+[![CI](https://github.com/authoritydmc/qr-term/actions/workflows/ci.yml/badge.svg)](https://github.com/authoritydmc/qr-term/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/qr-term.svg?style=flat&color=brightgreen)](https://www.npmjs.com/package/qr-term)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-green.svg)](https://nodejs.org)
@@ -106,7 +106,7 @@ qr-term --info
 ```typescript
 import { renderQR } from "qr-term";
 
-await renderQR("https://github.com/username/qr-term");
+await renderQR("https://github.com/authoritydmc/qr-term");
 ```
 
 ### 2. Capture formatted string (e.g. for CLI layouts / boxes)
@@ -169,7 +169,7 @@ const matrix = createQRMatrix("Hello World", "M");
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/qr-term.git
+git clone https://github.com/authoritydmc/qr-term.git
 cd qr-term
 
 # Install dependencies

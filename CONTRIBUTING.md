@@ -6,7 +6,7 @@ Thank you for your interest in contributing to `qr-term`!
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/username/qr-term.git
+   git clone https://github.com/authoritydmc/qr-term.git
    cd qr-term
    ```
 
