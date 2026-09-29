@@ -51,7 +51,10 @@
     "dev": "tsup --watch",
     "test": "tsx --test src/test/qr-term.test.ts",
     "lint": "eslint src/ --ext .ts",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "npm run build && npm test",
+    "release:patch": "npm version patch && git push origin main --follow-tags",
+    "release:minor": "npm version minor && git push origin main --follow-tags",
+    "release:major": "npm version major && git push origin main --follow-tags"
   },
   "dependencies": {
     "commander": "^12.1.0",

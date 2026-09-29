@@ -184,6 +184,27 @@ npm run build
 
 ---
 
+## 🚀 Automated Release & Versioning
+
+You can bump the version, create git tags, and release packages in two automated ways:
+
+### Method 1: From GitHub Actions Web UI (1-Click)
+1. Go to **Actions** -> **Automated Version & Release**.
+2. Click **Run workflow**.
+3. Choose release bump type: `patch` (e.g. `1.0.1`), `minor` (`1.1.0`), or `major` (`2.0.0`).
+4. Click **Run workflow**. The action will automatically run tests, bump `package.json`, commit, create git tag `vX.Y.Z`, push, publish to NPM, and create a GitHub Release with release notes!
+
+### Method 2: From Terminal
+```bash
+# Bumps version, creates git tag, and pushes to origin
+npm run release:patch  # for bug fixes / patches
+npm run release:minor  # for new features
+npm run release:major  # for breaking changes
+```
+GitHub Actions will automatically pick up the pushed tag and publish the release to NPM & GitHub Releases.
+
+---
+
 ## 📄 License
 
 [MIT](LICENSE) © 2026
