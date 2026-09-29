@@ -1,0 +1,70 @@
+{
+  "name": "qr-term",
+  "version": "1.0.0",
+  "description": "High-fidelity inline QR code generator & terminal renderer supporting Kitty, iTerm2, Sixel, Half-Block Unicode, and Braille graphics across macOS, Linux, Windows, PowerShell, Bash, and Zsh.",
+  "keywords": [
+    "qr",
+    "qrcode",
+    "terminal",
+    "inline-images",
+    "kitty-graphics",
+    "iterm2",
+    "sixel",
+    "cli",
+    "powershell",
+    "zsh",
+    "bash",
+    "unicode",
+    "half-block"
+  ],
+  "author": "Antigravity Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/qr-term.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/qr-term/issues"
+  },
+  "homepage": "https://github.com/username/qr-term#readme",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "qr-term": "./dist/cli.js",
+    "qrx": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "tsx --test src/test/qr-term.test.ts",
+    "lint": "eslint src/ --ext .ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/qrcode": "^1.5.5",
+    "tsup": "^8.2.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
