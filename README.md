@@ -14,7 +14,8 @@ Designed both as an **interactive CLI utility** and a **zero-fuss library** for 
 
 ## ✨ Features
 
-- 🔍 **Pure JS/TS QR Code Reader & Decoder**: Scan & decode QR codes from PNG and JPEG image files, buffers, or piped stdin without native C++ dependencies.
+- 🔍 **Pure JS/TS QR Code Reader & Decoder**: Scan & decode QR codes from PNG and JPEG image files, buffers, clipboard, or piped stdin without native C++ dependencies.
+- 📋 **System Clipboard Integration**: Read text or screenshot images directly from clipboard to encode or decode with zero hassle.
 - 🖥️ **Universal Terminal Support**: Automatically detects and uses the highest-quality rendering protocol available in your current terminal.
 - 🎨 **Multi-Protocol Engine**:
   - **Kitty Graphics Protocol** (Ghostty, Kitty, WezTerm) — native pixel-perfect rendering.
@@ -26,7 +27,6 @@ Designed both as an **interactive CLI utility** and a **zero-fuss library** for 
 - 📦 **Dual ESM & CommonJS**: Full TypeScript definitions (`.d.ts`) included out of the box.
 - ⚡ **Zero Native C++ Build Dependencies**: Runs anywhere Node.js runs with pure JavaScript/TypeScript.
 - 🚰 **Pipe-Friendly CLI**: Supports both direct arguments and standard input pipes for encoding and decoding.
-
 
 ---
 
@@ -71,8 +71,13 @@ yarn add qr-term
 ## 🛠️ CLI Usage
 
 ```bash
-# Basic usage
+# Basic usage (encode text/URL)
 qr-term "https://github.com"
+
+# Encode text copied to clipboard
+qr-term --clipboard
+# or
+qr-term -c
 
 # Using alias
 qrx "https://github.com"
@@ -101,12 +106,17 @@ qr-term decode qr.png
 qr-term -d qr.jpg
 cat qr.png | qr-term decode
 
+# Decode QR code directly from copied screenshot/image in clipboard
+qr-term decode --clipboard
+qr-term decode -c
+
 # Verbose decode (shows QR version and boundary coordinates)
 qr-term decode qr.png --verbose
 
 # Inspect detected terminal capabilities
 qr-term --info
 ```
+
 
 ---
 

@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { generateQR, renderQR } from "./core.js";
 import { decodeQR } from "./decoder.js";
+import { readClipboardText, readClipboardImage } from "./utils/clipboard.js";
 import { TerminalProtocol, ErrorCorrectionLevel } from "./types.js";
 import { detectTerminalCapabilities } from "./detector.js";
 import fs from "fs";
@@ -73,6 +74,7 @@ async function main() {
     .option("-i, --invert", "Invert foreground and background colors", false)
     .option("--fg <color>", "Foreground color (hex or rgb)")
     .option("--bg <color>", "Background color (hex or rgb or transparent)")
+    .option("-c, --clipboard", "Read input from system clipboard", false)
     .option("-d, --decode <file>", "Decode QR code from an image file")
     .option("--info", "Display detected terminal graphics capabilities and exit")
     .action(async (textArg, options) => {
@@ -96,6 +98,10 @@ async function main() {
         }
 
         let input = textArg;
+        if (!input && options.clipboard) {
+          input = await readClipboardText();
+        }
+
         if (!input) {
           input = await readStdinText();
         }
@@ -125,18 +131,31 @@ async function main() {
   program
     .command("decode [file]")
     .alias("read")
-    .description("Decode QR code from an image file or standard input pipe")
+    .description("Decode QR code from an image file, clipboard, or standard input pipe")
+    .option("-c, --clipboard", "Read image directly from system clipboard", false)
     .option("--raw", "Print raw decoded payload only", true)
     .option("--verbose", "Print additional metadata (version, coordinates)", false)
     .action(async (filePath, decodeOptions) => {
       try {
         let input: string | Buffer;
-        if (filePath) {
+        if (decodeOptions.clipboard) {
+          try {
+            input = await readClipboardImage();
+          } catch (clipErr: any) {
+            // If image read fails, check if clipboard has a file path text
+            const clipText = (await readClipboardText().catch(() => "")).trim();
+            if (clipText && fs.existsSync(clipText)) {
+              input = clipText;
+            } else {
+              throw clipErr;
+            }
+          }
+        } else if (filePath) {
           input = filePath;
         } else {
           const buffer = await readStdinBuffer();
           if (buffer.length === 0) {
-            console.error("\x1b[31mError: Please provide an image file path or pipe image data.\x1b[0m");
+            console.error("\x1b[31mError: Please provide an image file path, use --clipboard, or pipe image data.\x1b[0m");
             process.exit(1);
           }
           input = buffer;

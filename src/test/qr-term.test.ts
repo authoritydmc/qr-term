@@ -108,3 +108,10 @@ test("decodeQR decodes PNG image buffer correctly", async () => {
   assert.ok(result.location.topLeftCorner.x !== undefined);
 });
 
+test("clipboard utility functions are exported", async () => {
+  const { readClipboardText, readClipboardImage } = await import("../index.js");
+  assert.strictEqual(typeof readClipboardText, "function");
+  assert.strictEqual(typeof readClipboardImage, "function");
+});
+
+

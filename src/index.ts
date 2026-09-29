@@ -9,4 +9,6 @@ export * from "./protocols/kitty.js";
 export * from "./protocols/sixel.js";
 export * from "./core.js";
 export * from "./decoder.js";
+export * from "./utils/clipboard.js";
+
 
