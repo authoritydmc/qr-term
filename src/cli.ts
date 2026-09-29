@@ -1,10 +1,11 @@
 import { Command } from "commander";
 import { generateQR, renderQR } from "./core.js";
+import { decodeQR } from "./decoder.js";
 import { TerminalProtocol, ErrorCorrectionLevel } from "./types.js";
 import { detectTerminalCapabilities } from "./detector.js";
 import fs from "fs";
 
-async function readStdin(): Promise<string> {
+async function readStdinText(): Promise<string> {
   return new Promise((resolve) => {
     let data = "";
     if (process.stdin.isTTY) {
@@ -26,13 +27,33 @@ async function readStdin(): Promise<string> {
   });
 }
 
+async function readStdinBuffer(): Promise<Buffer> {
+  return new Promise((resolve) => {
+    const chunks: Buffer[] = [];
+    if (process.stdin.isTTY) {
+      resolve(Buffer.alloc(0));
+      return;
+    }
+
+    process.stdin.on("data", (chunk) => {
+      chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+    });
+    process.stdin.on("end", () => {
+      resolve(Buffer.concat(chunks));
+    });
+    setTimeout(() => {
+      if (chunks.length === 0) resolve(Buffer.alloc(0));
+    }, 100);
+  });
+}
+
 async function main() {
   const program = new Command();
 
   program
     .name("qr-term")
     .description(
-      "High-fidelity inline QR code generator & terminal renderer supporting Kitty, iTerm2, Sixel, Half-Block Unicode, and Braille graphics."
+      "High-fidelity inline QR code generator & decoder with terminal rendering supporting Kitty, iTerm2, Sixel, Half-Block Unicode, and Braille graphics."
     )
     .version("1.0.0", "-v, --version", "Output the current version")
     .argument("[text]", "Text or URL to encode in QR code")
@@ -52,6 +73,7 @@ async function main() {
     .option("-i, --invert", "Invert foreground and background colors", false)
     .option("--fg <color>", "Foreground color (hex or rgb)")
     .option("--bg <color>", "Background color (hex or rgb or transparent)")
+    .option("-d, --decode <file>", "Decode QR code from an image file")
     .option("--info", "Display detected terminal graphics capabilities and exit")
     .action(async (textArg, options) => {
       try {
@@ -67,9 +89,15 @@ async function main() {
           process.exit(0);
         }
 
+        if (options.decode) {
+          const result = await decodeQR(options.decode);
+          console.log(result.data);
+          process.exit(0);
+        }
+
         let input = textArg;
         if (!input) {
-          input = await readStdin();
+          input = await readStdinText();
         }
 
         if (!input) {
@@ -87,6 +115,41 @@ async function main() {
           foreground: options.fg,
           background: options.bg,
         });
+      } catch (err: any) {
+        console.error(`\x1b[31mError: ${err.message || err}\x1b[0m`);
+        process.exit(1);
+      }
+    });
+
+  // Dedicated subcommand for decode / read
+  program
+    .command("decode [file]")
+    .alias("read")
+    .description("Decode QR code from an image file or standard input pipe")
+    .option("--raw", "Print raw decoded payload only", true)
+    .option("--verbose", "Print additional metadata (version, coordinates)", false)
+    .action(async (filePath, decodeOptions) => {
+      try {
+        let input: string | Buffer;
+        if (filePath) {
+          input = filePath;
+        } else {
+          const buffer = await readStdinBuffer();
+          if (buffer.length === 0) {
+            console.error("\x1b[31mError: Please provide an image file path or pipe image data.\x1b[0m");
+            process.exit(1);
+          }
+          input = buffer;
+        }
+
+        const result = await decodeQR(input);
+        if (decodeOptions.verbose) {
+          console.log(`QR Version: ${result.version}`);
+          console.log(`Location: ${JSON.stringify(result.location)}`);
+          console.log(`Payload:\n${result.data}`);
+        } else {
+          console.log(result.data);
+        }
       } catch (err: any) {
         console.error(`\x1b[31mError: ${err.message || err}\x1b[0m`);
         process.exit(1);

@@ -98,3 +98,13 @@ test("generateQR handles auto and explicit protocols", async () => {
   const kitty = await generateQR("https://github.com", { protocol: "kitty" });
   assert.ok(kitty.startsWith("\x1b_G"));
 });
+
+test("decodeQR decodes PNG image buffer correctly", async () => {
+  const payload = "https://github.com/authoritydmc/qr-term";
+  const png = await createQRPng(payload);
+  const result = await import("../index.js").then((m) => m.decodeQR(png));
+  assert.strictEqual(result.data, payload);
+  assert.ok(result.version > 0);
+  assert.ok(result.location.topLeftCorner.x !== undefined);
+});
+

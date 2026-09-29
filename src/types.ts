@@ -83,3 +83,29 @@ export interface TerminalCapabilities {
   isTTY: boolean;
   termProgram?: string;
 }
+
+export interface QRPoint {
+  x: number;
+  y: number;
+}
+
+export interface QRDecodeResult {
+  data: string;
+  binaryData: number[];
+  version: number;
+  location: {
+    topRightCorner: QRPoint;
+    topLeftCorner: QRPoint;
+    bottomRightCorner: QRPoint;
+    bottomLeftCorner: QRPoint;
+    topRightFinderPattern?: QRPoint;
+    topLeftFinderPattern?: QRPoint;
+    bottomLeftFinderPattern?: QRPoint;
+    bottomRightAlignmentPattern?: QRPoint;
+  };
+}
+
+export interface QRDecodeOptions {
+  inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
+}
+

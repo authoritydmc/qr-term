@@ -6,14 +6,15 @@
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-green.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-> **High-fidelity inline QR code generator & terminal renderer** with automatic protocol detection across macOS, Linux, and Windows (Kitty, iTerm2, Sixel, Half-Block Unicode, and Braille).
+> **High-fidelity inline QR code generator, terminal renderer & image decoder** with automatic protocol detection across macOS, Linux, and Windows (Kitty, iTerm2, Sixel, Half-Block Unicode, and Braille).
 
-Designed both as an **interactive CLI utility** and a **zero-fuss library** for CLI applications (e.g. 2FA login prompts, payment links, pairing codes, Wi-Fi share, and crypto addresses).
+Designed both as an **interactive CLI utility** and a **zero-fuss library** for CLI applications (e.g. 2FA login prompts, payment links, pairing codes, Wi-Fi share, crypto addresses, and QR image scanning).
 
 ---
 
 ## ✨ Features
 
+- 🔍 **Pure JS/TS QR Code Reader & Decoder**: Scan & decode QR codes from PNG and JPEG image files, buffers, or piped stdin without native C++ dependencies.
 - 🖥️ **Universal Terminal Support**: Automatically detects and uses the highest-quality rendering protocol available in your current terminal.
 - 🎨 **Multi-Protocol Engine**:
   - **Kitty Graphics Protocol** (Ghostty, Kitty, WezTerm) — native pixel-perfect rendering.
@@ -24,7 +25,8 @@ Designed both as an **interactive CLI utility** and a **zero-fuss library** for 
 - 🌈 **Full ANSI 24-Bit Truecolor & Monochrome**: Custom foreground/background colors with ANSI sequence optimization.
 - 📦 **Dual ESM & CommonJS**: Full TypeScript definitions (`.d.ts`) included out of the box.
 - ⚡ **Zero Native C++ Build Dependencies**: Runs anywhere Node.js runs with pure JavaScript/TypeScript.
-- 🚰 **Pipe-Friendly CLI**: Supports both direct arguments and standard input pipes.
+- 🚰 **Pipe-Friendly CLI**: Supports both direct arguments and standard input pipes for encoding and decoding.
+
 
 ---
 
@@ -94,6 +96,14 @@ qr-term "https://github.com" --fg "#00ffff" --bg "#0f172a"
 # Error correction level (L = 7%, M = 15%, Q = 25%, H = 30%)
 qr-term "https://github.com" --ecc H
 
+# Decode / scan a QR code image
+qr-term decode qr.png
+qr-term -d qr.jpg
+cat qr.png | qr-term decode
+
+# Verbose decode (shows QR version and boundary coordinates)
+qr-term decode qr.png --verbose
+
 # Inspect detected terminal capabilities
 qr-term --info
 ```
@@ -109,7 +119,21 @@ import { renderQR } from "qr-term";
 await renderQR("https://github.com/authoritydmc/qr-term");
 ```
 
-### 2. Capture formatted string (e.g. for CLI layouts / boxes)
+### 2. Decode QR Code from Image File or Buffer
+```typescript
+import { decodeQR } from "qr-term";
+
+// From file path
+const result = await decodeQR("./qrcode.png");
+console.log(result.data); // Extracted text/URL
+
+// From buffer (PNG / JPEG)
+const imageBuffer = await fs.promises.readFile("./qrcode.jpg");
+const decoded = await decodeQR(imageBuffer);
+console.log(decoded.data, decoded.version, decoded.location);
+```
+
+### 3. Capture formatted string (e.g. for CLI layouts / boxes)
 ```typescript
 import { generateQR } from "qr-term";
 
@@ -123,29 +147,22 @@ const qrCode = await generateQR("https://auth.company.com/pair?code=88310", {
 console.log(qrCode);
 ```
 
-### 3. Check terminal capabilities programmatically
+### 4. Check terminal capabilities programmatically
 ```typescript
 import { detectTerminalCapabilities } from "qr-term";
 
 const caps = detectTerminalCapabilities();
 console.log(caps);
-// {
-//   protocol: 'iterm2',
-//   hasKitty: false,
-//   hasITerm2: true,
-//   hasSixel: false,
-//   isTTY: true,
-//   termProgram: 'iTerm.app'
-// }
 ```
 
-### 4. Raw QR Matrix Extraction
+### 5. Raw QR Matrix Extraction
 ```typescript
 import { createQRMatrix } from "qr-term";
 
 const matrix = createQRMatrix("Hello World", "M");
 // 2D boolean array: matrix[row][col] === true for dark module
 ```
+
 
 ---
 

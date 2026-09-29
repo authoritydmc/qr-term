@@ -8,3 +8,5 @@ export * from "./protocols/iterm2.js";
 export * from "./protocols/kitty.js";
 export * from "./protocols/sixel.js";
 export * from "./core.js";
+export * from "./decoder.js";
+
